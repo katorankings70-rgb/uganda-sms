@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#047857" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-icon" href="icon-192.png" />
 <title>Uganda Secondary SMS - NLSC & UACE</title>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
@@ -21,7 +27,7 @@ h2{font-size:19px}h3{font-size:16px;margin-top:0}
 input,select,textarea{width:100%;padding:10px 11px;border:1px solid var(--border);border-radius:8px;font-size:16px;min-height:44px;background:#fff}
 label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--muted)}
 button{background:var(--primary);color:#fff;border:none;padding:10px 16px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px;min-height:42px}button:hover{background:var(--primary-dark)}button.secondary{background:#334155}button.danger{background:var(--danger);padding:7px 10px;font-size:12px;min-height:34px}
-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}nav button{background:#e2e8f0;color:#1e293b;white-space:nowrap;flex:0 0 auto}nav button.active{background:var(--primary);color:#fff}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}nav button{background:#e2e8f0;color:#1e293b;white-space:nowrap;flex:0 0 auto;width:auto!important}nav button.active{background:var(--primary);color:#fff}
 .table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:8px}
 table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}th,td{border:1px solid var(--border);padding:8px;text-align:left;vertical-align:top}th{background:#f8fafc;white-space:nowrap}td input{font-size:14px;min-height:38px;padding:7px 8px}
 .pill{display:inline-flex;align-items:center;gap:8px;background:#ecfdf5;border:1px solid #a7f3d0;padding:5px 10px;border-radius:20px;margin:4px;font-size:13px;max-width:100%;word-break:break-word}
@@ -33,8 +39,9 @@ table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}th,td{b
 .search-bar{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:8px;font-size:15px;margin:10px 0;background:#f8fafc}
 .dev-footer{text-align:center;padding:18px 10px 28px;font-size:13px;color:#475569;border-top:1px solid var(--border);margin-top:20px;background:#fff;border-radius:10px}
 .dev-links{display:flex;justify-content:center;gap:10px;margin-top:10px;flex-wrap:wrap}.dev-links a{display:inline-flex;align-items:center;gap:6px;color:#0f172a;text-decoration:none;font-weight:700;background:#f1f5f9;border:1px solid #cbd5e1;padding:9px 12px;border-radius:999px;font-size:13px}
+nav::-webkit-scrollbar{height:6px}
 @media(max-width:900px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}.report-meta{grid-template-columns:repeat(2,1fr)}nav{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}}
-@media(max-width:600px){.container{margin:10px auto;padding:0 10px}.card{padding:14px}.grid-4{grid-template-columns:1fr}header{flex-direction:column;align-items:flex-start}header>div{width:100%}#schoolBadge{font-size:12px;word-break:break-word;width:100%}button{width:100%}td button{width:auto}#authScreen{grid-template-columns:1fr!important}.report-sheet{padding:14px;border-width:1px}.report-header h2{font-size:17px}.report-meta{grid-template-columns:1fr;gap:6px}.report-sheet table{font-size:12px;min-width:520px}.dev-links{flex-direction:column}.dev-links a{justify-content:center;width:100%}.school-logo-large{width:68px;height:68px}canvas{max-width:100%!important}}
+@media(max-width:600px){.container{margin:10px auto;padding:0 10px}.card{padding:14px}.grid-4{grid-template-columns:1fr}header{flex-direction:column;align-items:flex-start}header>div{width:100%}#schoolBadge{font-size:12px;word-break:break-word;width:100%}button{width:100%}nav button{width:auto!important;flex:0 0 auto!important;padding:8px 12px!important;font-size:13px!important;min-height:38px!important}td button{width:auto}#authScreen{grid-template-columns:1fr!important}.report-sheet{padding:14px;border-width:1px}.report-header h2{font-size:17px}.report-meta{grid-template-columns:1fr;gap:6px}.report-sheet table{font-size:12px;min-width:520px}.dev-links{flex-direction:column}.dev-links a{justify-content:center;width:100%}.school-logo-large{width:68px;height:68px}canvas{max-width:100%!important}}
 @media(min-width:1280px){.container{max-width:1320px}.card{padding:22px}}
 </style>
 </head>
@@ -161,6 +168,7 @@ function promoteAllQuick(){var from=document.getElementById('promoteFrom').value
 function promoteSelected(){var to=document.getElementById('promoteTo').value;var ids=Array.from(document.querySelectorAll('.promote-check:checked')).map(function(c){return c.getAttribute('data-id');});currentSchool.payload.students.forEach(function(s){if(ids.indexOf(s.id)>-1)s.cls=to;});document.getElementById('promoteMsg').textContent='Promoted '+ids.length+' students to '+to;saveState();refreshAllViews();}
 function refreshAllViews(){if(!currentSchool)return;try{renderPaperCodes();}catch(e){}try{renderTeachers();}catch(e){}try{renderStudentsAndAssembly();}catch(e){}try{renderCombos();}catch(e){}try{renderSubjects();}catch(e){}try{renderMarksPortal();}catch(e){}try{renderAnalytics();}catch(e){}try{renderReportCards();}catch(e){}try{renderHeadteacherSettings();}catch(e){}try{renderTeachersSettings();}catch(e){}setTimeout(function(){try{drawSchoolGraphs();}catch(e){}},400);}
 document.querySelectorAll('.auto-year').forEach(function(el){el.textContent=new Date().getFullYear();});
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(function(){}); }
 loadKnownSchools();updateNetBadge();
 </script>
 </body>
